@@ -21,6 +21,7 @@ const client = new Client({
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+  console.log("MESSAGE MASUK:", message.content);
 
   const isMentioned = message.mentions.has(client.user);
   const isAutoChannel = message.channel.name === AUTO_CHANNEL_NAME;
