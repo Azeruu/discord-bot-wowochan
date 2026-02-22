@@ -1,6 +1,9 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import express from "express"
+
+const app = express()
 
 dotenv.config();
 
@@ -76,3 +79,11 @@ client.once("ready", () => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+app.get("/", (req, res) => {
+  res.send("Bot is running 🚀")
+})
+
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
