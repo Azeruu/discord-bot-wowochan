@@ -1,10 +1,11 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
-import express from "express"
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
+import { handle } from "hono/vercel";
 
-const app = express()
-
+const app = new Hono();
 dotenv.config();
 
 const AUTO_CHANNEL_NAME = "chat-wowo-chan"; 
@@ -80,11 +81,18 @@ client.once("ready", () => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
-app.get("/", (req, res) => {
-  res.send("Bot is running 🚀")
-})
+app.get("/", (c) => {
+  return c.text("Bot is running 🚀");
+});
 
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+export default handle(app);
+
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+  serve({
+    fetch: app.fetch,
+    port: PORT
+  }, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
