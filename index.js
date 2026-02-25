@@ -3,7 +3,6 @@ import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
-import { handle } from "hono/vercel";
 
 const app = new Hono();
 dotenv.config();
@@ -85,14 +84,20 @@ app.get("/", (c) => {
   return c.text("Bot is running 🚀");
 });
 
-export default handle(app);
+const PORT = process.env.PORT || 3000;
 
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
-  serve({
-    fetch: app.fetch,
-    port: PORT
-  }, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+serve({
+  fetch: app.fetch,
+  port: PORT
+}, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// Self-ping untuk menjaga server tetap hidup di layanan gratis (Render/Railway/dll)
+// Mengirim request setiap 14 menit agar tidak sleep (idle limit biasa 15 menit)
+setInterval(() => {
+  const url = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  fetch(url)
+    .then(() => console.log(`[Self-Ping] Berhasil nge-ping ${url} agar server aktif terus 🚀.`))
+    .catch((err) => console.error(`[Self-Ping] Gagal nge-ping ${url}:`, err.message));
+}, 14 * 60 * 1000); // 14 menit
