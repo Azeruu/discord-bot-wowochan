@@ -54,7 +54,7 @@ client.on("messageCreate", async (message) => {
         body: JSON.stringify({
           prompt: cleanMessage,
           userId: message.author.id,
-          sessionId: `discord-${message.channel.id}`,
+          sessionId: `discord-${message.author.id}`,
         }),
       }
     );
