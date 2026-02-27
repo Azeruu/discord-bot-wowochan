@@ -45,7 +45,7 @@ client.on("messageCreate", async (message) => {
     }
 
     const response = await fetch(
-      "https://chatbotaibe.onrender.com/chat",
+      "https://ai-assist-doea.onrender.com/chat",
       {
         method: "POST",
         headers: {
